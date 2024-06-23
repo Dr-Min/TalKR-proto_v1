@@ -7,6 +7,9 @@ from pydub import AudioSegment
 from pydub.playback import play
 import time
 
+assistant_id = st.secrets["assistant_id"]
+thread_id = st.secrets["thread_id"]
+
 # Streamlit 앱 설정
 st.title("음성 대화 AI 비서")
 
@@ -15,7 +18,7 @@ with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", type="password", value="sk-proj-ceyCqKqrC5woLyNIny2RT3BlbkFJa9YfiRIn9v2JrtoTKfh")
     client = OpenAI(api_key=openai_api_key)
     
-    thread_id = st.text_input("Thread ID", value="thread_xPjzE1aHcWWqpHFwLp6rSfN1")
+    thread_id = st.text_input("Thread ID", value=thread_id)
     
     if st.button("새 대화 시작"):
         thread = client.beta.threads.create()
@@ -55,7 +58,7 @@ def speech_to_text(filename):
 # OpenAI API를 사용하여 응답 생성
 def generate_response(thread_id, user_input):
     client.beta.threads.messages.create(thread_id=thread_id, role="user", content=user_input)
-    run = client.beta.threads.runs.create(thread_id=thread_id, assistant_id="asst_LbiOukDMTjWewNPlE2oDYGtw")
+    run = client.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id)
 
     while True:
         run_status = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
